@@ -1,0 +1,16 @@
+function emitWasmCode(parseDag) {
+    //The initial parseDAG pointer (The root) AND the smallest possible binary wasm module
+    let stack = [parseDag], wasm = [0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00];
+    while (stack.length > 0) {
+        let curTop = stack.pop();
+        switch (curTop.nodeType) {
+            case "variable": break;
+            case "function": break;
+            default: return "ERROR: invalid node";
+        }
+    }
+    return wasm;
+}
+
+//const wasm = emitter();
+//const instance = await WebAssembly.instantiate(wasm);
