@@ -23,7 +23,8 @@ function lexCLike(script) {
                     curCharCode = script[idx].charCode();
                 }
                 switch (curTok) {
-                    case "if": case "else": case "do": case "while": case "for": case "switch": case "case": case "default": case "goto": case "fallthru": case "break": case "continue": curType = "controlflow"; break;
+                    case "if": case "else": case "do": case "while": case "for": case "switch": case "case": case "default": curType = "controlflow"; break;
+                    case "goto": case "fallthru": case "break": case "continue": curType = "gotostmt"; break;
                     case "void": case "bool": case "char": case "byte": case "short": case "int": case "long": case "float": case "double": case "unsigned": curType = "datatype"; break;
                     case "auto": case "const": case "extern": case "static": case "register": curType = "storagespec"; break;
                     case "true": case "false": curType = "boolconst"; break;
@@ -53,6 +54,7 @@ function parseCLike(script) {
     for (let jdx = 0; jdx < tokens.length;) {
         switch (tokens[jdx].tokType) {
             case "controlflow": jdx++; break;
+            case "gotostmt": jdx++; break;
             case "leftgrouper": jdx++; break;
             case "rightgrouper": jdx++; break;
             case "datatype":
@@ -61,7 +63,12 @@ function parseCLike(script) {
                 while (tokens[jdx].tokName === "*") { curNode.pointerdepth++; jdx++; }
                 switch (tokens[jdx].tokType) {
                     case "identifier":
-                        ;
+                        jdx++;
+                        if (tokens[jdx].tokType == "(") {
+                            ;
+                        } else if (tokens[jdx].tokType == "=") {
+                            ;
+                        } else {return "syntax error";}
                     break;
                     case "(":
                         let ptrChild = parseDatatype(tokens, jdx + 1);
